@@ -24,6 +24,7 @@ class GameBoardView: UIView {
     var boxes = [Box]()
     var lines = [Line]()
     var currentPlayer:Player
+    var lastFilledLine:Line?
     
     required init?(coder aDecoder: NSCoder) {
         currentPlayer = playerA
@@ -48,12 +49,7 @@ class GameBoardView: UIView {
         MARGIN_H = (Double(rect.width) - Double(self.columns) * GameBoardView.BOX_SIZE) / 2.0
         MARGIN_V = (Double(rect.height) - Double(self.rows) * GameBoardView.BOX_SIZE) / 2.0
         
-        /*
-        for _ in 0..<((rows + 1) * columns + (columns + 1) * rows) {
-            lines.append(Line())
-        }
-        */
-        
+        //Horizontal lines
         for r in 0...rows {
             for c in 0..<columns {
                 let startX = GameBoardView.BOX_SIZE * Double(c) + MARGIN_H
@@ -69,7 +65,7 @@ class GameBoardView: UIView {
                     hitRect: hitRect))
             }
         }
-        
+        //Vertical lines
         for r in 0..<rows {
             for c in 0...columns {
                 let startX = GameBoardView.BOX_SIZE * Double(c) + MARGIN_H
@@ -100,13 +96,9 @@ class GameBoardView: UIView {
                 boxes.append(box)
             }
         }
-//        lines = [Line]((rows + 1) * columns + (columns + 1) * rows)
-//        boxes = [Box](rows * columns)
     }
     
     func onTap(_ recognizer: UITapGestureRecognizer) {
-        print("Player is: \(currentPlayer.label)")
-
         let loc = recognizer.location(ofTouch: 0, in: self)
         
         for box in boxes {
@@ -137,6 +129,12 @@ class GameBoardView: UIView {
                 
                 if let selectedLine = selectedLine {
                     if selectedLine.filledBy == nil {
+                        if let lastLine = lastFilledLine {
+                            self.setNeedsDisplay(lastLine.hitRect)
+                        }
+                        
+                        lastFilledLine = selectedLine
+                        
                         var boxCompleted = false
                         
                         if box.numberOfLinesFilled() == 3 {
@@ -182,7 +180,6 @@ class GameBoardView: UIView {
                 break
             }
         }
-        
     }
     
     // Only override draw() if you perform custom drawing.
@@ -218,20 +215,25 @@ class GameBoardView: UIView {
             }
         }
         
+        ctx.setStrokeColor(UIColor.black.cgColor)
+        
         for line in lines {
-            if let filledBy = line.filledBy {
-                ctx.setStrokeColor(filledBy.lineColor.cgColor)
-
+            if let _ = line.filledBy {
                 ctx.move(to: line.start)
                 ctx.addLine(to: line.end)
 
-                ctx.strokePath()
             }
         }
+
+        ctx.strokePath()
         
-        
-//        ctx.addEllipse(in: circSize)
-//        ctx.strokePath()
-//        ctx.strokeEllipse(in: circSize)
+        if let lastLine = lastFilledLine {
+            ctx.setStrokeColor(lastLine.filledBy!.lineColor.cgColor)
+            
+            ctx.move(to: lastLine.start)
+            ctx.addLine(to: lastLine.end)
+            
+            ctx.strokePath()
+        }
     }
 }
