@@ -14,15 +14,22 @@ class GameBoardView: UIView {
     static let MIN_MARGIN = 20.0
     static let HIT_MARGIN = 10.0
     
+    let playerA = Player(color: UIColor.blue, label: "A")
+    let playerB = Player(color: UIColor.red, label: "B")
+    
     var columns:Int!
     var rows:Int!
     var MARGIN_H:Double!
     var MARGIN_V:Double!
     var boxes = [Box]()
     var lines = [Line]()
+    var currentPlayer:Player
     
     required init?(coder aDecoder: NSCoder) {
+        currentPlayer = playerA
+
         super.init(coder: aDecoder)
+        
         
         addGestureRecognizer(UITapGestureRecognizer(target: self, action:#selector(onTap(_:))))
     }
@@ -104,37 +111,59 @@ class GameBoardView: UIView {
         //print("\(loc.x) \(loc.y)")
         
         for box in boxes {
-            let topX = GameBoardView.BOX_SIZE * Double(box.column) + MARGIN_H
-            let topY = GameBoardView.BOX_SIZE * Double(box.row) + MARGIN_V
+            let boxHitRect = box.hitRect(board: self)
             
-            let rect = CGRect(x: topX - GameBoardView.HIT_MARGIN,
-                              y: topY - GameBoardView.HIT_MARGIN,
-                              width: GameBoardView.BOX_SIZE +  2.0 * GameBoardView.HIT_MARGIN,
-                              height: GameBoardView.BOX_SIZE +  2.0 * GameBoardView.HIT_MARGIN)
-            
-            if rect.contains(loc) {
+            if boxHitRect.contains(loc) {
                 var selectedLine:Line?
-                var rowOffset:Int?
-                var colOffset:Int?
+                var rowOffset = 0
+                var colOffset = 0
                 
                 print("Hit: \(box.row) \(box.column)")
                 if box.top.hitRect.contains(loc) {
                     print("Top")
                     selectedLine = box.top
+                    rowOffset = -1
                 } else if box.right.hitRect.contains(loc) {
                     print("Right")
                     selectedLine = box.right
+                    colOffset = 1
                 } else if box.bottom.hitRect.contains(loc) {
                     print("Bottom")
                     selectedLine = box.bottom
+                    rowOffset = 1
                 } else if box.left.hitRect.contains(loc) {
                     print("Left")
                     selectedLine = box.left
+                    colOffset = -1
                 }
                 
                 if let selectedLine = selectedLine {
                     if selectedLine.filledBy == nil {
-                        selectedLine.filledBy = Player(color: UIColor.blue, label: "A")
+                        if box.numberOfLinesFilled() == 3 {
+                            //This will fill the box
+                            box.completedBy = currentPlayer
+                            
+                            self.setNeedsDisplay(boxHitRect)
+                        }
+                        
+                        //See if the neighbor got filled also
+                        if (rowOffset != 0 || colOffset != 0) {
+                            let neighborRow = box.row + rowOffset
+                            let neighborCol = box.column + colOffset
+                            
+                            if neighborRow >= 0 && neighborRow < rows && neighborCol >= 0 && neighborCol < columns {
+                                let neighbor = boxes[neighborRow * columns + neighborCol]
+                                
+                                if neighbor.numberOfLinesFilled() == 3 {
+                                    //Neighbor also will get filled
+                                    neighbor.completedBy = currentPlayer
+                                    
+                                    self.setNeedsDisplay(neighbor.hitRect(board: self))
+                                }
+                            }
+                        }
+                        
+                        selectedLine.filledBy = currentPlayer
                         
                         self.setNeedsDisplay(selectedLine.hitRect)
                     }
@@ -166,7 +195,16 @@ class GameBoardView: UIView {
                                       width: GameBoardView.DOT_RAD * 2,
                                       height: GameBoardView.DOT_RAD * 2)
                 
-                ctx.fillEllipse(in: circSize)
+                ctx.addEllipse(in: circSize)
+            }
+        }
+        
+        ctx.fillPath()
+
+        for box in boxes {
+            if let completedBy = box.completedBy {
+                ctx.setFillColor(completedBy.lineColor.cgColor)
+                ctx.fill(box.rect(board: self))
             }
         }
         
@@ -180,6 +218,7 @@ class GameBoardView: UIView {
         }
         
         ctx.strokePath()
+        
 //        ctx.addEllipse(in: circSize)
 //        ctx.strokePath()
 //        ctx.strokeEllipse(in: circSize)
