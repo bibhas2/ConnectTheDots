@@ -6,7 +6,17 @@
 //  Copyright © 2017 Bibhas Bhattacharya. All rights reserved.
 //
 
-import Foundation
+import UIKit
+
 class Line {
+    let start:CGPoint
+    let end:CGPoint
+    let hitRect:CGRect
     var filledBy:Player?
+    
+    init(start:CGPoint, end:CGPoint, hitRect:CGRect) {
+        self.start = start
+        self.end = end
+        self.hitRect = hitRect
+    }
 }

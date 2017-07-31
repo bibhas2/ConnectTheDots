@@ -12,6 +12,7 @@ class GameBoardView: UIView {
     static let DOT_RAD = 2.0
     static let BOX_SIZE = 50.0
     static let MIN_MARGIN = 20.0
+    static let HIT_MARGIN = 10.0
     
     var columns:Int!
     var rows:Int!
@@ -40,8 +41,43 @@ class GameBoardView: UIView {
         MARGIN_H = (Double(rect.width) - Double(self.columns) * GameBoardView.BOX_SIZE) / 2.0
         MARGIN_V = (Double(rect.height) - Double(self.rows) * GameBoardView.BOX_SIZE) / 2.0
         
+        /*
         for _ in 0..<((rows + 1) * columns + (columns + 1) * rows) {
             lines.append(Line())
+        }
+        */
+        
+        for r in 0...rows {
+            for c in 0..<columns {
+                let startX = GameBoardView.BOX_SIZE * Double(c) + MARGIN_H
+                let startY = GameBoardView.BOX_SIZE * Double(r) + MARGIN_V
+                let endX = GameBoardView.BOX_SIZE * Double(c + 1) + MARGIN_H
+                let hitRect = CGRect(x: startX - GameBoardView.HIT_MARGIN,
+                                     y: startY - GameBoardView.HIT_MARGIN,
+                                     width: GameBoardView.BOX_SIZE + 2.0 * GameBoardView.HIT_MARGIN,
+                                     height: 2.0 * GameBoardView.HIT_MARGIN)
+                lines.append(Line(
+                    start: CGPoint(x:startX, y:startY),
+                    end: CGPoint(x:endX, y:startY),
+                    hitRect: hitRect))
+            }
+        }
+        
+        for r in 0..<rows {
+            for c in 0...columns {
+                let startX = GameBoardView.BOX_SIZE * Double(c) + MARGIN_H
+                let startY = GameBoardView.BOX_SIZE * Double(r) + MARGIN_V
+                let endY = GameBoardView.BOX_SIZE * Double(r + 1) + MARGIN_V
+                let hitRect = CGRect(x: startX - GameBoardView.HIT_MARGIN,
+                                     y: startY - GameBoardView.HIT_MARGIN,
+                                     width: 2.0 * GameBoardView.HIT_MARGIN,
+                                     height: GameBoardView.BOX_SIZE + 2.0 * GameBoardView.HIT_MARGIN)
+
+                lines.append(Line(
+                    start: CGPoint(x:startX, y:startY),
+                    end: CGPoint(x:startX, y:endY),
+                    hitRect:hitRect))
+            }
         }
         
         for r in 0..<rows {
@@ -71,10 +107,40 @@ class GameBoardView: UIView {
             let topX = GameBoardView.BOX_SIZE * Double(box.column) + MARGIN_H
             let topY = GameBoardView.BOX_SIZE * Double(box.row) + MARGIN_V
             
-            let rect = CGRect(x: topX, y: topY, width: GameBoardView.BOX_SIZE, height: GameBoardView.BOX_SIZE)
+            let rect = CGRect(x: topX - GameBoardView.HIT_MARGIN,
+                              y: topY - GameBoardView.HIT_MARGIN,
+                              width: GameBoardView.BOX_SIZE +  2.0 * GameBoardView.HIT_MARGIN,
+                              height: GameBoardView.BOX_SIZE +  2.0 * GameBoardView.HIT_MARGIN)
             
             if rect.contains(loc) {
+                var selectedLine:Line?
+                var rowOffset:Int?
+                var colOffset:Int?
+                
                 print("Hit: \(box.row) \(box.column)")
+                if box.top.hitRect.contains(loc) {
+                    print("Top")
+                    selectedLine = box.top
+                } else if box.right.hitRect.contains(loc) {
+                    print("Right")
+                    selectedLine = box.right
+                } else if box.bottom.hitRect.contains(loc) {
+                    print("Bottom")
+                    selectedLine = box.bottom
+                } else if box.left.hitRect.contains(loc) {
+                    print("Left")
+                    selectedLine = box.left
+                }
+                
+                if let selectedLine = selectedLine {
+                    if selectedLine.filledBy == nil {
+                        selectedLine.filledBy = Player(color: UIColor.blue, label: "A")
+                        
+                        self.setNeedsDisplay(selectedLine.hitRect)
+                    }
+                }
+                
+                break
             }
         }
         
@@ -87,7 +153,6 @@ class GameBoardView: UIView {
             return
         }
         
-        ctx.setStrokeColor(UIColor.black.cgColor)
         ctx.setFillColor(UIColor.black.cgColor)
         ctx.setLineWidth(2)
 
@@ -104,6 +169,17 @@ class GameBoardView: UIView {
                 ctx.fillEllipse(in: circSize)
             }
         }
+        
+        for line in lines {
+            if let filledBy = line.filledBy {
+                ctx.setStrokeColor(filledBy.lineColor.cgColor)
+
+                ctx.move(to: line.start)
+                ctx.addLine(to: line.end)
+            }
+        }
+        
+        ctx.strokePath()
 //        ctx.addEllipse(in: circSize)
 //        ctx.strokePath()
 //        ctx.strokeEllipse(in: circSize)
