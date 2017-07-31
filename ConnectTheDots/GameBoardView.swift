@@ -105,10 +105,9 @@ class GameBoardView: UIView {
     }
     
     func onTap(_ recognizer: UITapGestureRecognizer) {
-        //recognizer.numberOfTouches
+        print("Player is: \(currentPlayer.label)")
+
         let loc = recognizer.location(ofTouch: 0, in: self)
-        
-        //print("\(loc.x) \(loc.y)")
         
         for box in boxes {
             let boxHitRect = box.hitRect(board: self)
@@ -118,30 +117,32 @@ class GameBoardView: UIView {
                 var rowOffset = 0
                 var colOffset = 0
                 
-                print("Hit: \(box.row) \(box.column)")
                 if box.top.hitRect.contains(loc) {
-                    print("Top")
+//                    print("Top")
                     selectedLine = box.top
                     rowOffset = -1
                 } else if box.right.hitRect.contains(loc) {
-                    print("Right")
+//                    print("Right")
                     selectedLine = box.right
                     colOffset = 1
                 } else if box.bottom.hitRect.contains(loc) {
-                    print("Bottom")
+//                    print("Bottom")
                     selectedLine = box.bottom
                     rowOffset = 1
                 } else if box.left.hitRect.contains(loc) {
-                    print("Left")
+//                    print("Left")
                     selectedLine = box.left
                     colOffset = -1
                 }
                 
                 if let selectedLine = selectedLine {
                     if selectedLine.filledBy == nil {
+                        var boxCompleted = false
+                        
                         if box.numberOfLinesFilled() == 3 {
                             //This will fill the box
                             box.completedBy = currentPlayer
+                            boxCompleted = true
                             
                             self.setNeedsDisplay(boxHitRect)
                         }
@@ -157,7 +158,9 @@ class GameBoardView: UIView {
                                 if neighbor.numberOfLinesFilled() == 3 {
                                     //Neighbor also will get filled
                                     neighbor.completedBy = currentPlayer
-                                    
+
+                                    boxCompleted = true
+
                                     self.setNeedsDisplay(neighbor.hitRect(board: self))
                                 }
                             }
@@ -166,6 +169,13 @@ class GameBoardView: UIView {
                         selectedLine.filledBy = currentPlayer
                         
                         self.setNeedsDisplay(selectedLine.hitRect)
+                        
+                        //Set the next current player
+                        if !boxCompleted {
+                            currentPlayer = currentPlayer === playerA ? playerB : playerA
+                            
+                            print("Player now: \(currentPlayer.label)")
+                        }
                     }
                 }
                 
@@ -214,10 +224,11 @@ class GameBoardView: UIView {
 
                 ctx.move(to: line.start)
                 ctx.addLine(to: line.end)
+
+                ctx.strokePath()
             }
         }
         
-        ctx.strokePath()
         
 //        ctx.addEllipse(in: circSize)
 //        ctx.strokePath()
