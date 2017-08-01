@@ -25,6 +25,7 @@ class GameBoardView: UIView {
     var lines = [Line]()
     var currentPlayer:Player
     var lastFilledLine:Line?
+    weak var delegate: GameBoardDelegate?
     
     required init?(coder aDecoder: NSCoder) {
         currentPlayer = playerA
@@ -32,6 +33,24 @@ class GameBoardView: UIView {
         super.init(coder: aDecoder)
         
         addGestureRecognizer(UITapGestureRecognizer(target: self, action:#selector(onTap(_:))))
+    }
+    
+    func newGame() {
+        for line in lines {
+            line.filledBy = nil
+        }
+        
+        for box in boxes {
+            box.completedBy = nil
+        }
+        
+        playerA.score = 0
+        playerB.score = 0
+        
+        currentPlayer = playerA
+        lastFilledLine = nil
+        
+        self.setNeedsDisplay()
     }
     
     override func layoutSubviews() {
@@ -139,9 +158,13 @@ class GameBoardView: UIView {
                         if box.numberOfLinesFilled() == 3 {
                             //This will fill the box
                             box.completedBy = currentPlayer
+                            currentPlayer.score = currentPlayer.score + 1
+                            
                             boxCompleted = true
                             
                             self.setNeedsDisplay(boxHitRect)
+                            
+                            delegate?.onBoxFilled(box: box)
                         }
                         
                         //See if the neighbor got filled also
@@ -155,10 +178,13 @@ class GameBoardView: UIView {
                                 if neighbor.numberOfLinesFilled() == 3 {
                                     //Neighbor also will get filled
                                     neighbor.completedBy = currentPlayer
+                                    currentPlayer.score = currentPlayer.score + 1
 
                                     boxCompleted = true
 
                                     self.setNeedsDisplay(neighbor.hitRect(board: self))
+                                    
+                                    delegate?.onBoxFilled(box: neighbor)
                                 }
                             }
                         }
@@ -174,6 +200,8 @@ class GameBoardView: UIView {
                         } else {
                             //Set the next current player
                             currentPlayer = currentPlayer === playerA ? playerB : playerA
+                            
+                            delegate?.onPlayerTurn(player: currentPlayer)
                         }
                     }
                 }

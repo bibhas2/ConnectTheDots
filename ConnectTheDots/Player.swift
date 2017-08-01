@@ -11,6 +11,7 @@ import UIKit
 class Player {
     let lineColor:UIColor
     let label:String
+    var score = 0
     
     init(color:UIColor, label:String) {
         self.lineColor = color

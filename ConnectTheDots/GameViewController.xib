@@ -5,12 +5,16 @@
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12121"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12089"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="GameViewController" customModule="ConnectTheDots" customModuleProvider="target">
             <connections>
+                <outlet property="gameBoardView" destination="jXF-J0-neJ" id="Nrq-sM-mTP"/>
+                <outlet property="playerAScore" destination="2Zq-53-hqr" id="BFD-r1-PjZ"/>
+                <outlet property="playerBScore" destination="w4X-ES-TcH" id="ODc-PP-c0b"/>
+                <outlet property="turnLabel" destination="xhP-U2-2kD" id="d28-vX-yZQ"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -19,18 +23,70 @@
             <rect key="frame" x="0.0" y="0.0" width="667" height="375"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qex-j8-yhX">
+                    <rect key="frame" x="461" y="4" width="85" height="30"/>
+                    <color key="backgroundColor" red="0.0" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="85" id="X7o-h0-IMj"/>
+                    </constraints>
+                    <state key="normal" title="New game">
+                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <connections>
+                        <action selector="startNewGame:" destination="-1" eventType="touchUpInside" id="pAQ-za-Agp"/>
+                    </connections>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XFd-6a-BH8">
+                    <rect key="frame" x="562" y="4" width="85" height="30"/>
+                    <color key="backgroundColor" red="0.0" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="85" id="IbG-el-g2C"/>
+                    </constraints>
+                    <state key="normal" title="Settings">
+                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                </button>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jXF-J0-neJ" customClass="GameBoardView" customModule="ConnectTheDots" customModuleProvider="target">
-                    <rect key="frame" x="0.0" y="0.0" width="667" height="375"/>
+                    <rect key="frame" x="0.0" y="38" width="667" height="337"/>
                     <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                 </view>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2Zq-53-hqr">
+                    <rect key="frame" x="6" y="8" width="42" height="21"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="w4X-ES-TcH">
+                    <rect key="frame" x="63" y="8" width="42" height="21"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xhP-U2-2kD">
+                    <rect key="frame" x="312" y="8" width="42" height="21"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
+                <constraint firstItem="XFd-6a-BH8" firstAttribute="leading" secondItem="Qex-j8-yhX" secondAttribute="trailing" constant="16" id="0aP-Ww-gwO"/>
                 <constraint firstAttribute="bottom" secondItem="jXF-J0-neJ" secondAttribute="bottom" id="4Vx-CF-Ml0"/>
+                <constraint firstItem="w4X-ES-TcH" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="8" id="9zv-nQ-U6f"/>
+                <constraint firstItem="XFd-6a-BH8" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="4" id="JE0-fl-CQT"/>
+                <constraint firstItem="xhP-U2-2kD" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="8" id="Qp4-A4-wGt"/>
+                <constraint firstItem="2Zq-53-hqr" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="6" id="R92-cT-2J4"/>
+                <constraint firstItem="jXF-J0-neJ" firstAttribute="top" secondItem="XFd-6a-BH8" secondAttribute="bottom" constant="4" id="S7Q-ht-Sxp"/>
+                <constraint firstItem="Qex-j8-yhX" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="4" id="TtE-p6-A89"/>
+                <constraint firstItem="xhP-U2-2kD" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="haR-I9-xOk"/>
+                <constraint firstAttribute="trailing" secondItem="XFd-6a-BH8" secondAttribute="trailing" constant="20" id="ihl-88-Nh4"/>
                 <constraint firstItem="jXF-J0-neJ" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="mct-y3-Za1"/>
+                <constraint firstItem="2Zq-53-hqr" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="8" id="rFf-jW-cD5"/>
+                <constraint firstItem="w4X-ES-TcH" firstAttribute="leading" secondItem="2Zq-53-hqr" secondAttribute="trailing" constant="15" id="uEV-Hn-HXl"/>
                 <constraint firstAttribute="trailing" secondItem="jXF-J0-neJ" secondAttribute="trailing" id="vEj-qd-1qj"/>
-                <constraint firstItem="jXF-J0-neJ" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="yEY-9y-Ebd"/>
             </constraints>
+            <point key="canvasLocation" x="38" y="62"/>
         </view>
     </objects>
 </document>
