@@ -168,11 +168,13 @@ class GameBoardView: UIView {
                         
                         self.setNeedsDisplay(selectedLine.hitRect)
                         
-                        //Set the next current player
-                        if !boxCompleted {
+                        if boxCompleted {
+                            //We don't want to draw the last filled line with
+                            //player's color
+                            lastFilledLine = nil
+                        } else {
+                            //Set the next current player
                             currentPlayer = currentPlayer === playerA ? playerB : playerA
-                            
-                            print("Player now: \(currentPlayer.label)")
                         }
                     }
                 }
