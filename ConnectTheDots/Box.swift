@@ -38,22 +38,22 @@ class Box {
     }
     
     func hitRect(board:GameBoardView) -> CGRect {
-        let topX = GameBoardView.BOX_SIZE * Double(self.column) + board.MARGIN_H
-        let topY = GameBoardView.BOX_SIZE * Double(self.row) + board.MARGIN_V
+        let topX = board.boxSize * Double(self.column) + board.MARGIN_H
+        let topY = board.boxSize * Double(self.row) + board.MARGIN_V
         
         return CGRect(x: topX - GameBoardView.HIT_MARGIN,
                       y: topY - GameBoardView.HIT_MARGIN,
-                      width: GameBoardView.BOX_SIZE +  2.0 * GameBoardView.HIT_MARGIN,
-                      height: GameBoardView.BOX_SIZE +  2.0 * GameBoardView.HIT_MARGIN)
+                      width: board.boxSize +  2.0 * GameBoardView.HIT_MARGIN,
+                      height: board.boxSize +  2.0 * GameBoardView.HIT_MARGIN)
     }
 
     func rect(board:GameBoardView) -> CGRect {
-        let topX = GameBoardView.BOX_SIZE * Double(self.column) + board.MARGIN_H
-        let topY = GameBoardView.BOX_SIZE * Double(self.row) + board.MARGIN_V
+        let topX = board.boxSize * Double(self.column) + board.MARGIN_H
+        let topY = board.boxSize * Double(self.row) + board.MARGIN_V
         
         return CGRect(x: topX,
                       y: topY,
-                      width: GameBoardView.BOX_SIZE,
-                      height: GameBoardView.BOX_SIZE)
+                      width: board.boxSize,
+                      height: board.boxSize)
     }
 }

@@ -10,13 +10,13 @@ import UIKit
 
 class GameBoardView: UIView {
     static let DOT_RAD = 2.0
-    static let BOX_SIZE = 50.0
     static let MIN_MARGIN = 20.0
     static let HIT_MARGIN = 10.0
     
-    let playerA = Player(color: UIColor.blue, label: "A")
-    let playerB = Player(color: UIColor.red, label: "B")
+    let playerA = Player(color: UIColor.blue, label: "Player A")
+    let playerB = Player(color: UIColor.red, label: "Player B")
     
+    var boxSize = 50.0
     var columns:Int!
     var rows:Int!
     var MARGIN_H:Double!
@@ -31,7 +31,6 @@ class GameBoardView: UIView {
 
         super.init(coder: aDecoder)
         
-        
         addGestureRecognizer(UITapGestureRecognizer(target: self, action:#selector(onTap(_:))))
     }
     
@@ -43,21 +42,21 @@ class GameBoardView: UIView {
         let availWidth = Double(rect.width) - GameBoardView.MIN_MARGIN * 2.0
         let availHeight = Double(rect.height) - GameBoardView.MIN_MARGIN * 2.0
         
-        columns = Int((availWidth / GameBoardView.BOX_SIZE).rounded(.down))
-        rows = Int((availHeight / GameBoardView.BOX_SIZE).rounded(.down))
+        columns = Int((availWidth / boxSize).rounded(.down))
+        rows = Int((availHeight / boxSize).rounded(.down))
         
-        MARGIN_H = (Double(rect.width) - Double(self.columns) * GameBoardView.BOX_SIZE) / 2.0
-        MARGIN_V = (Double(rect.height) - Double(self.rows) * GameBoardView.BOX_SIZE) / 2.0
+        MARGIN_H = (Double(rect.width) - Double(self.columns) * boxSize) / 2.0
+        MARGIN_V = (Double(rect.height) - Double(self.rows) * boxSize) / 2.0
         
         //Horizontal lines
         for r in 0...rows {
             for c in 0..<columns {
-                let startX = GameBoardView.BOX_SIZE * Double(c) + MARGIN_H
-                let startY = GameBoardView.BOX_SIZE * Double(r) + MARGIN_V
-                let endX = GameBoardView.BOX_SIZE * Double(c + 1) + MARGIN_H
+                let startX = boxSize * Double(c) + MARGIN_H
+                let startY = boxSize * Double(r) + MARGIN_V
+                let endX = boxSize * Double(c + 1) + MARGIN_H
                 let hitRect = CGRect(x: startX - GameBoardView.HIT_MARGIN,
                                      y: startY - GameBoardView.HIT_MARGIN,
-                                     width: GameBoardView.BOX_SIZE + 2.0 * GameBoardView.HIT_MARGIN,
+                                     width: boxSize + 2.0 * GameBoardView.HIT_MARGIN,
                                      height: 2.0 * GameBoardView.HIT_MARGIN)
                 lines.append(Line(
                     start: CGPoint(x:startX, y:startY),
@@ -68,13 +67,13 @@ class GameBoardView: UIView {
         //Vertical lines
         for r in 0..<rows {
             for c in 0...columns {
-                let startX = GameBoardView.BOX_SIZE * Double(c) + MARGIN_H
-                let startY = GameBoardView.BOX_SIZE * Double(r) + MARGIN_V
-                let endY = GameBoardView.BOX_SIZE * Double(r + 1) + MARGIN_V
+                let startX = boxSize * Double(c) + MARGIN_H
+                let startY = boxSize * Double(r) + MARGIN_V
+                let endY = boxSize * Double(r + 1) + MARGIN_V
                 let hitRect = CGRect(x: startX - GameBoardView.HIT_MARGIN,
                                      y: startY - GameBoardView.HIT_MARGIN,
                                      width: 2.0 * GameBoardView.HIT_MARGIN,
-                                     height: GameBoardView.BOX_SIZE + 2.0 * GameBoardView.HIT_MARGIN)
+                                     height: boxSize + 2.0 * GameBoardView.HIT_MARGIN)
 
                 lines.append(Line(
                     start: CGPoint(x:startX, y:startY),
@@ -196,8 +195,8 @@ class GameBoardView: UIView {
 
         for posY in 0...self.rows {
             for posX in 0...self.columns {
-                let centerX = MARGIN_H + GameBoardView.BOX_SIZE * Double(posX)
-                let centerY = MARGIN_V + GameBoardView.BOX_SIZE * Double(posY)
+                let centerX = MARGIN_H + boxSize * Double(posX)
+                let centerY = MARGIN_V + boxSize * Double(posY)
                 
                 let circSize = CGRect(x: centerX - GameBoardView.DOT_RAD,
                                       y: centerY - GameBoardView.DOT_RAD,
